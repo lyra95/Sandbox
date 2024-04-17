@@ -1,0 +1,20 @@
+# global timeout과 step timeout을 맞았을 때의 동작을 테스트 해보기 위함
+name: timeout test
+on:
+  workflow_dispatch:
+    inputs:
+      SECONDS:
+        description: sleep seconds
+        required: true
+        type: number
+jobs:
+  do:
+    timeout-minutes: 3
+    runs-on: ubuntu-22.04
+    steps:
+      - run: sleep "$INPUT_SECONDS"
+        timeout-minutes: 1
+        env:
+          INPUTS_SECONDS: ${{ inputs.SECONDS }}
+      - if: ${{ failure() }}
+        run: echo "timeout"
